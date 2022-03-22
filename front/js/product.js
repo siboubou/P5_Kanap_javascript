@@ -6,23 +6,35 @@ console.log(id)
 
 
 
-fetch ('http://localhost:3000/api/products')
+fetch (`http://localhost:3000/api/products/${id}`)
 .then( res => res.json() )
-.then ( (resultatAPI) => {
-    products = resultatAPI;
-    console.log(products);
-    })
-.catch (err => console.log("erreur GET api", err))    
+.then ( data => {
+    console.log(data);
+    let title = document.getElementById('title')
+    title.innerHTML = data.name;
+
+    let price = document.getElementById('price')
+    price.innerHTML =data.price;
+
+    let description = document.getElementById('description')
+    description.innerHTML =data.description;
+
+    
+    for ( let color of data.colors){ 
+        
+        let select = document.getElementById('colors');
+        let option = document.createElement('option');
+        option.value = color;
+        option.innerHTML = color;
+        select.add(option);
+    }  
+
+})
+
+.catch (err => console.log("erreur GET api id", err))    
 
 
 
-/*           <div class="item__content__titlePrice">
-<h1 id="title"><!-- Nom du produit --></h1>
-<p>Prix : <span id="price"><!-- 42 --></span>€</p>
-</div>
 
-<div class="item__content__description">
-<p class="item__content__description__title">Description :</p>
-<p id="description"><!-- Dis enim malesuada risus sapien gravida nulla nisl arcu. --></p>
-</div>
-*/
+
+

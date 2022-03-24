@@ -14,7 +14,7 @@ async function getProduct(){
     .then ( response => { 
         dataProduct = response ;
     })
-    .catch (err => console.log("erreur GET api id", err))  
+    .catch (err => console.log("erreur GET api", err))  
 }
 
 getProduct();
@@ -22,11 +22,19 @@ getProduct();
 //On intègre les données du produit dans le HTML
 
 function ficheProduct(){
+
+    const divImg = document.getElementById('img')
+    const img = document.createElement('img');
+    img.setAttribute('src', `${dataProduct.imageUrl}`);
+    img.setAttribute('alt', `${dataProduct.altTxt}`);
+
+    divImg.appendChild(img)
+
     let title = document.getElementById('title');
     title.innerHTML = dataProduct.name ;
 
     let price = document.getElementById('price')
-    price.innerHTML =dataProduct.price;
+    price.innerHTML = dataProduct.price;
 
     let description = document.getElementById('description')
     description.innerHTML =dataProduct.description;
@@ -39,7 +47,10 @@ function ficheProduct(){
         option.innerHTML = color;
         select.add(option);
     }
-}
+};
+
+
+
 
 //On appelle la fonction globale pour afficher le produit
 async function afficheProduct(){
@@ -51,18 +62,18 @@ afficheProduct();
 
 
 
-
-
 document
 .getElementById('addToCart')
 .addEventListener('click', function(e){
     e.preventDefault();
-    console.log('ajout dans panier');
+    
     addPanier(); 
+    totalCost();
+    totalQuantity();
 })
 
 
-// si je me setitem directement dans la fonction addPanier lorsuqe j'ajoute product je n'ajoute pas un tableau
+// si je me setItem directement dans la fonction addPanier lsq j'ajoute product je n'ajoute pas un tableau
 function savePanier(panier){
     localStorage.setItem('panier', JSON.stringify(panier)); 
 }
@@ -77,15 +88,16 @@ function getPanier(){
     }   
 }
 
+
 function addPanier(){
 
     let currentColor = document.getElementById('colors').value
     let currentQuantity = JSON.parse(document.getElementById('quantity').value)
-    
+
     let product = {
         "id" : productId,
         "color" : currentColor,
-        "quantity" : 0
+        "quantity" : 0, 
     };
 
     let productsIn = getPanier();
@@ -99,9 +111,39 @@ function addPanier(){
         product.quantity = currentQuantity;
         productsIn.push(product);
     }
+
     savePanier(productsIn);
 }
 
+async function totalCost(){
+    await getProduct();
+    let currentPrice = dataProduct.price ;
+    
+    let pricePanier = JSON.parse(localStorage.getItem('totalCost'));
 
+    if(pricePanier != null){
+        localStorage.setItem('totalCost', pricePanier + currentPrice ) ;
+    }else{
+        localStorage.setItem('totalCost', currentPrice);
+    }
+}
 
+async function totalQuantity(){
+    await getProduct();
+
+    let currentQuantity = JSON.parse(document.getElementById('quantity').value);
+    
+    let quantityPanier = JSON.parse(localStorage.getItem('totalQuantity'));
+
+    console.log(typeof quantityPanier)
+
+    if(quantityPanier != null){
+        localStorage.setItem('totalQuantity', quantityPanier + currentQuantity)
+    }else{
+        localStorage.setItem('totalQuantity', currentQuantity)
+    }
+
+    
+
+}
 

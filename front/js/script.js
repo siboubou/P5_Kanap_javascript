@@ -2,10 +2,11 @@
 const itemsPosition = document.querySelector('.items')
 
 //GET API
+
 fetch ("http://localhost:3000/api/products")  
     .then( res => res.json() )
-    .then ( (resultatAPI) => {
-        products = resultatAPI;
+    .then ( data => {
+        products = data;
         console.log(products);
 
         for (let product of products){

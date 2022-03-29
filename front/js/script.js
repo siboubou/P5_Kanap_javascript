@@ -3,14 +3,24 @@ const itemsPosition = document.querySelector('.items')
 
 //GET API
 
-fetch ("http://localhost:3000/api/products")  
+async function getAPI(){
+    await fetch ("http://localhost:3000/api/products")  
     .then( res => res.json() )
     .then ( data => {
-        products = data;
+        products = data ;
         console.log(products);
+    })
+    
+    .catch (err => console.log("erreur GET api", err))
+}
+
+
+
+async function afficheProducts(){
+    await getAPI();
 
         for (let product of products){
-
+            
             //création de la carte Produit
                 //Image    
                 const imageProduct = document.createElement('img')
@@ -40,10 +50,10 @@ fetch ("http://localhost:3000/api/products")
             
                 itemsPosition.appendChild(cardProduct)
         }
-    })     
+    }
     
-    .catch (err => console.log("erreur GET api", err))
-;
+     afficheProducts();
+
 
 
 

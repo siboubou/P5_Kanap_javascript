@@ -6,22 +6,22 @@ console.log(productId)
 
 // On récupère les données dataProduct du produit de la page
 
-let dataProduct ;
 
 async function getProduct(){
     await fetch (`http://localhost:3000/api/products/${productId}`)
     .then( res => res.json() )
-    .then ( response => { 
-        dataProduct = response ;
+    .then ( function(dataProduct) {   
+        console.log(dataProduct) ; 
+        return dataProduct;   
     })
     .catch (err => console.log("erreur GET api", err))  
 }
 
-getProduct();
-
 //On intègre les données du produit dans le HTML
-
-function ficheProduct(){
+ 
+async function afficheProduct(dataProduct){
+    dataProduct = await getProduct();
+    console.log(dataProduct);
 
     const divImg = document.getElementById('img')
     const img = document.createElement('img');
@@ -49,19 +49,11 @@ function ficheProduct(){
     }
 };
 
-
-
-
 //On appelle la fonction globale pour afficher le produit
-async function afficheProduct(){
-    await getProduct();
-    ficheProduct();
-}
-
 afficheProduct();
 
 
-
+//Lsq on clique sur ajouter au panier 
 document
 .getElementById('addToCart')
 .addEventListener('click', function(e){
@@ -73,11 +65,12 @@ document
 })
 
 
-// si je me setItem directement dans la fonction addPanier lsq j'ajoute product je n'ajoute pas un tableau
+// si je me setItem directement dans la fonction addPanier lsq j'ajoute product je n'ajoute pas un tableau ( => .find ne fonctionne pas)
 function savePanier(panier){
     localStorage.setItem('panier', JSON.stringify(panier)); 
 }
 
+//fonction qui vérifie ce qui est déja dans le panier
 function getPanier(){
     let productsIn = localStorage.getItem('panier') ;
 
@@ -88,7 +81,7 @@ function getPanier(){
     }   
 }
 
-
+//ajoute les produits au panier
 function addPanier(){
 
     let currentColor = document.getElementById('colors').value
@@ -115,6 +108,8 @@ function addPanier(){
     savePanier(productsIn);
 }
 
+
+//donne le cout total du panier
 async function totalCost(){
     await getProduct();
     let currentPrice = dataProduct.price ;
@@ -128,22 +123,16 @@ async function totalCost(){
     }
 }
 
+//donne la quantité total de produits dans le panier
 async function totalQuantity(){
     await getProduct();
 
     let currentQuantity = JSON.parse(document.getElementById('quantity').value);
-    
     let quantityPanier = JSON.parse(localStorage.getItem('totalQuantity'));
-
-    console.log(typeof quantityPanier)
 
     if(quantityPanier != null){
         localStorage.setItem('totalQuantity', quantityPanier + currentQuantity)
     }else{
         localStorage.setItem('totalQuantity', currentQuantity)
     }
-
-    
-
 }
-

@@ -8,17 +8,19 @@ async function getProducts() {
 }
 getProducts();
 
+//récupère les données du panier dans l'array cart
 let cart = localStorage.getItem("panier");
 cart = JSON.parse(cart);
-console.log(cart);
+
 
 //emplacement DOM
 const panierPosition = document.querySelector("#cart__items");
 
-async function productCard() {
+
+async function afficheProductCard() {
   await getProducts();
 
-  for (let product of cart) {
+  for (let product of cart) { //pour chaque produit dans le localStorage
     const article = document.createElement("article");
     article.classList.add("cart__item");
     article.setAttribute("data-id", `${product.id}`);
@@ -26,10 +28,9 @@ async function productCard() {
 
     panierPosition.appendChild(article);
 
-    console.log(products);
-    let foundProduct = products.find((p) => p._id == product.id);
-    console.log(foundProduct);
-
+    //on va chercher le produit dans l'API qui a le même id pour récupérer toutes ses données
+    let foundProduct = products.find((p) => p._id == product.id); 
+    
     if (foundProduct != undefined) {
       //div image
       const divImage = document.createElement("div");
@@ -78,7 +79,8 @@ async function productCard() {
       const quantityProduct = document.createElement("p");
       quantityProduct.textContent = `Qté : ${product.quantity}`;
 
-      const itemQuantity = document.createElement("input");
+      let itemQuantity = document.createElement("input");
+
       itemQuantity.classList.add("itemQuantity");
       itemQuantity.setAttribute("type", "number");
       itemQuantity.setAttribute("name", "itemQuantity");
@@ -91,9 +93,9 @@ async function productCard() {
 
       divSettings.appendChild(divSettingsQuantity);
 
+
       const divSettingsDelete = document.createElement("div");
       divSettingsDelete.classList.add("cart__item__content__settings__delete");
-
       const deleteProduct = document.createElement("p");
       deleteProduct.classList.add("deleteItem");
       deleteProduct.textContent = "Supprimer";
@@ -107,7 +109,66 @@ async function productCard() {
   }
 }
 
-productCard();
+afficheProductCard();
+
+
+//afficher la quantité totale qu'on récupère du localStorage
+let totalQuantity = document.getElementById('totalQuantity')
+let quantityStorage = localStorage.getItem('totalQuantity')
+quantityStorage = JSON.parse(quantityStorage)
+
+totalQuantity.textContent = quantityStorage
+
+
+//afficher le prix total qu'on récupère du localStorage
+let totalPrice = document.getElementById('totalPrice')
+let priceStorage = localStorage.getItem('totalCost')
+priceStorage = JSON.parse(priceStorage)
+
+totalPrice.textContent = priceStorage
+
+
+
+//Modifier quantité
+
+
+/*
+for(i=0 ; i<itemQuantity.lenght ; i++){
+  itemQuantity[i].addEventListener('change', function(e){
+    console.log(this.value)
+  })
+}
+/*
+//supprimer un produit
+
+let cartItems = document.getElementsByClassName('cart__item')
+
+console.log(cartItems[0])
+
+/*
+async function dataset (){
+  await afficheProductCard();
+  for (let cartItem of cartItems ){
+    console.log(cartItem.dataset.id)
+  
+  }
+}
+
+
+
+/*
+  let deleteItem = cartItem[i].closest('.deleteItem')
+  
+  deleteItem.addEventListener('click', function(){
+    console.log(deleteItem)
+  })
+    //localStorage.removeItem()
+  
+}
+
+
+  
+
 
 /*
 

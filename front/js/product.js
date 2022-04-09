@@ -3,27 +3,12 @@ const url = new URL(window.location) // stock l'url dans constante
 const productId = url.searchParams.get("id")
 console.log(productId)
 
-
-// On récupère les données dataProduct du produit de la page
-
-
-async function getProduct(){
-    await fetch (`http://localhost:3000/api/products/${productId}`)
-    .then( res => res.json() )
-    .then ( function(dataProduct) {   
-        console.log(dataProduct) ; 
-        return dataProduct;   
-    })
-    .catch (err => console.log("erreur GET api", err))  
-}
-
 //On intègre les données du produit dans le HTML
  
-async function afficheProduct(dataProduct){
-    dataProduct = await getProduct();
+function afficheProduct(dataProduct){  
     console.log(dataProduct);
 
-    const divImg = document.getElementById('img')
+    const divImg = document.querySelector('.item__img')
     const img = document.createElement('img');
     img.setAttribute('src', `${dataProduct.imageUrl}`);
     img.setAttribute('alt', `${dataProduct.altTxt}`);
@@ -39,7 +24,7 @@ async function afficheProduct(dataProduct){
     let description = document.getElementById('description')
     description.innerHTML =dataProduct.description;
 
-    for ( let color of dataProduct.colors){ 
+    for (let color of dataProduct.colors) { 
 
         let select = document.getElementById('colors');
         let option = document.createElement('option');
@@ -49,20 +34,45 @@ async function afficheProduct(dataProduct){
     }
 };
 
-//On appelle la fonction globale pour afficher le produit
-afficheProduct();
+/* En récupérant les données dataProduct du produit de la page
+ on appelle la fonction qui affiche ce produit
+*/
+
+fetch (`http://localhost:3000/api/products/${productId}`)
+    .then( res => res.json() )
+    .then ( dataProduct => {   
+        return afficheProduct(dataProduct);
+    })
+    .catch (err => console.log("erreur GET api", err))  
+;
 
 
 //Lsq on clique sur ajouter au panier 
+
 document
 .getElementById('addToCart')
 .addEventListener('click', function(e){
     e.preventDefault();
     
-    addPanier(); 
-    totalCost();
-    totalQuantity();
-})
+//si la couleur ou la quantité ne sont pas précisés il y aura une alerte
+    let currentColor = document.getElementById('colors').value ;
+    let currentQuantity = JSON.parse(document.getElementById('quantity').value) ;
+
+    if (currentColor == 0 ) {
+        alert("Vous n'avez pas choisi la couleur de votre futur canapé !" )
+
+    }else if (currentQuantity == 0 ){
+        alert("Dites-nous combien d'articles vous souhaitez ajouter à votre panier…")
+
+    } else{
+        addPanier(); //ajoute le produit sélectionné au panier
+       // totalCost(); //modifie le coût total du panier
+       // totalQuantity(); //modifie la quantité de produits dans le panier 
+        
+        //getToPanier(); //alerte qui permet d'aller directement au panier
+           
+    } 
+});
 
 
 // si je me setItem directement dans la fonction addPanier lsq j'ajoute product je n'ajoute pas un tableau ( => .find ne fonctionne pas)
@@ -76,24 +86,27 @@ function getPanier(){
 
     if(productsIn == null){
         return [];
-    }else{
+    } else {
         return JSON.parse(productsIn);
     }   
 }
 
-//ajoute les produits au panier
+//fonction qui ajoute les produits au panier
 function addPanier(){
 
     let currentColor = document.getElementById('colors').value
     let currentQuantity = JSON.parse(document.getElementById('quantity').value)
-
+   
+    
     let product = {
         "id" : productId,
         "color" : currentColor,
         "quantity" : 0, 
+        
     };
 
     let productsIn = getPanier();
+    console.log(productsIn)
     let foundProduct = productsIn.find(p => p.id == product.id);
     let foundColor = productsIn.find(p => p.color == product.color);
 
@@ -104,29 +117,29 @@ function addPanier(){
         product.quantity = currentQuantity;
         productsIn.push(product);
     }
-
     savePanier(productsIn);
 }
 
-
+/*
 //donne le cout total du panier
 async function totalCost(){
-    await getProduct();
-    let currentPrice = dataProduct.price ;
     
+    let currentPrice = document.getElementById('price').innerHTML;
+    console.log(currentPrice)
+
     let pricePanier = JSON.parse(localStorage.getItem('totalCost'));
+    let currentQuantity = JSON.parse(document.getElementById('quantity').value);
 
     if(pricePanier != null){
-        localStorage.setItem('totalCost', pricePanier + currentPrice ) ;
+        localStorage.setItem('totalCost', pricePanier + (currentPrice * currentQuantity))
     }else{
-        localStorage.setItem('totalCost', currentPrice);
+        localStorage.setItem('totalCost', currentPrice * currentQuantity );
     }
 }
 
 //donne la quantité total de produits dans le panier
 async function totalQuantity(){
-    await getProduct();
-
+    
     let currentQuantity = JSON.parse(document.getElementById('quantity').value);
     let quantityPanier = JSON.parse(localStorage.getItem('totalQuantity'));
 
@@ -136,3 +149,16 @@ async function totalQuantity(){
         localStorage.setItem('totalQuantity', currentQuantity)
     }
 }
+
+/*
+//Alerte qui permet soit d'aller directement au panier soit de rester sur la page
+
+function getToPanier(){
+    if ( confirm('Votre article a bien été ajouté, cliquez sur "ok" pour voir votre panier')){
+    window.location.href='http://127.0.0.1:5500/front/html/cart.html'
+    } else{
+        window.location.href=' http://127.0.0.1:5500/front/html/index.html'
+    console.log('annule')
+    }
+} 
+*/

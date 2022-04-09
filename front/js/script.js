@@ -18,7 +18,6 @@ async function getAPI(){
 
 async function afficheProducts(){
     await getAPI();
-
         for (let product of products){
             
             //création de la carte Produit

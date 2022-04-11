@@ -69,7 +69,7 @@ document
        // totalCost(); //modifie le coût total du panier
        // totalQuantity(); //modifie la quantité de produits dans le panier 
         
-        //getToPanier(); //alerte qui permet d'aller directement au panier
+        getToPanier(); //alerte qui permet d'aller directement au panier
            
     } 
 });
@@ -120,45 +120,14 @@ function addPanier(){
     savePanier(productsIn);
 }
 
-/*
-//donne le cout total du panier
-async function totalCost(){
-    
-    let currentPrice = document.getElementById('price').innerHTML;
-    console.log(currentPrice)
 
-    let pricePanier = JSON.parse(localStorage.getItem('totalCost'));
-    let currentQuantity = JSON.parse(document.getElementById('quantity').value);
-
-    if(pricePanier != null){
-        localStorage.setItem('totalCost', pricePanier + (currentPrice * currentQuantity))
-    }else{
-        localStorage.setItem('totalCost', currentPrice * currentQuantity );
-    }
-}
-
-//donne la quantité total de produits dans le panier
-async function totalQuantity(){
-    
-    let currentQuantity = JSON.parse(document.getElementById('quantity').value);
-    let quantityPanier = JSON.parse(localStorage.getItem('totalQuantity'));
-
-    if(quantityPanier != null){
-        localStorage.setItem('totalQuantity', quantityPanier + currentQuantity)
-    }else{
-        localStorage.setItem('totalQuantity', currentQuantity)
-    }
-}
-
-/*
 //Alerte qui permet soit d'aller directement au panier soit de rester sur la page
 
 function getToPanier(){
     if ( confirm('Votre article a bien été ajouté, cliquez sur "ok" pour voir votre panier')){
     window.location.href='http://127.0.0.1:5500/front/html/cart.html'
     } else{
-        window.location.href=' http://127.0.0.1:5500/front/html/index.html'
-    console.log('annule')
+        window.location.href= `http://127.0.0.1:5500/front/html/product.html?id=${productId}`
+    
     }
 } 
-*/

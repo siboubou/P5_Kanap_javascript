@@ -1,23 +1,18 @@
 //emplacement dans le DOM des cartes produits
 const itemsPosition = document.querySelector('.items')
 
-//GET API
+//---------- Fonction qui récupère les données de l'API -----
 
 async function getAPI(){
-    await fetch ("http://localhost:3000/api/products")  
-    .then( res => res.json() )
-    .then ( data => {
-        products = data ;
-        console.log(products);
-    })
-    
-    .catch (err => console.log("erreur GET api", err))
+    let products = await fetch ("http://localhost:3000/api/products")  
+    return await products.json();
 }
 
-
-
+/*------------- Fonction qui affiche les produits -------
+* Pour chaque produit de l'API le bloc html est créé
+*/
 async function afficheProducts(){
-    await getAPI();
+   let products = await getAPI();
         for (let product of products){
             
             //création de la carte Produit
@@ -51,7 +46,7 @@ async function afficheProducts(){
         }
     }
     
-     afficheProducts();
+afficheProducts();
 
 
 
